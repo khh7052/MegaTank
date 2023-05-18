@@ -173,7 +173,7 @@ public class AIController : Controller
     {
         if (agent.isOnNavMesh) return;
 
-        agent.transform.position = agent.pathEndPosition;
+        agent.Warp(agent.nextPosition);
     }
 
     public virtual void TargetUpdate()
