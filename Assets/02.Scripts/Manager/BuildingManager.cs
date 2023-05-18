@@ -7,8 +7,13 @@ public enum MouseType
 {
     NONE,
     SPAWN,
+    INFOMATION,
+    PLACEMENT,
     REMOVE,
 }
+
+
+
 
 public class BuildingManager : Singleton<BuildingManager>
 {
@@ -30,7 +35,6 @@ public class BuildingManager : Singleton<BuildingManager>
             {
                 renderer.material = value;
             }
-            // selectUnitObjectRenderer.material = value;
         }
     }
     
@@ -42,10 +46,6 @@ public class BuildingManager : Singleton<BuildingManager>
     public AudioSource audioSource;
     public AudioClip spawnSound;
     public AudioClip removeSound;
-
-    public Color spawnColor;
-    public Color removeColor;
-    private Color originalColor;
 
     private void Awake()
     {
@@ -73,6 +73,11 @@ public class BuildingManager : Singleton<BuildingManager>
                     if (Input.GetMouseButtonDown(0)) Spawn();
                     else if (Input.GetMouseButtonDown(1)) Init();
                 }
+                break;
+            case MouseType.INFOMATION:
+                InfomationUnitUpdate();
+                if (Input.GetMouseButtonDown(0)) OpenUnitInfomation();
+                else if (Input.GetMouseButtonDown(1)) Init();
                 break;
             case MouseType.REMOVE:
                 RemoveUnitUpdate();
@@ -102,7 +107,10 @@ public class BuildingManager : Singleton<BuildingManager>
         {
             UnitMaterial = originalMaterial;
             selectUnitObject.SetActive(false);
+            selectUnit = null;
+            selectUnitObject = null;
         }
+        
     }
 
     void SelectUnitMaterialReset()
@@ -110,6 +118,8 @@ public class BuildingManager : Singleton<BuildingManager>
         if (selectUnit)
         {
             UnitMaterial = originalMaterial;
+            selectUnit = null;
+            selectUnitObject = null;
         }
     }
 
@@ -128,6 +138,12 @@ public class BuildingManager : Singleton<BuildingManager>
     public void StartSpawn(Unit unit)
     {
         if (GameManager.Instance.CurrentMoney < unit.spawnMoney) return;
+        if (!unit.makeCondition.ConditionCheck(unit))
+        {
+            print("조건을 달성하지 못했습니다.");
+            return; // 조건 달성 안되면 금지
+        }
+
         Init();
         SpawnInit(unit);
     }
@@ -145,6 +161,11 @@ public class BuildingManager : Singleton<BuildingManager>
         audioSource.Play();
 
         if (GameManager.Instance.CurrentMoney < selectUnit.spawnMoney) Init();
+        if (!selectUnit.makeCondition.ConditionCheck(selectUnit))
+        {
+            print("조건을 달성하지 못했습니다.");
+            Init();
+        }
     }
 
     
@@ -158,6 +179,37 @@ public class BuildingManager : Singleton<BuildingManager>
     {
         selectUnitObject.transform.Rotate(0, dir * Time.deltaTime * rotateSpeed, 0);
     }
+
+    // Infomation
+    public void StartInfomation()
+    {
+        Init();
+        mouseType = MouseType.INFOMATION;
+    }
+
+    void InfomationUnitUpdate()
+    {
+        SelectUnitMaterialReset();
+
+        if (unitHit.collider)
+        {
+            selectUnit = unitHit.collider.GetComponent<Unit>();
+            if (selectUnit == null) return;
+            
+            selectUnitObject = unitHit.collider.gameObject;
+            selectUnitObjectRenderers = selectUnitObject.GetComponentsInChildren<Renderer>();
+            originalMaterial = selectUnitObject.GetComponentsInChildren<Renderer>()[0].material;
+            UnitMaterial = spawnMaterial;
+        }
+    }
+
+    void OpenUnitInfomation()
+    {
+        if (selectUnit == null) return;
+        UIManager.Instance.InfomationUIUpdate(selectUnit);
+    }
+
+
 
     // Remove
     public void StartRemove()
@@ -174,7 +226,7 @@ public class BuildingManager : Singleton<BuildingManager>
         {
             selectUnit = unitHit.collider.GetComponent<Unit>();
             if (selectUnit == null) return;
-            if (selectUnit == GameManager.Instance.baseUnit || selectUnit == GameManager.Instance.playerUnit) return;
+            if (selectUnit == GameManager.Instance.BaseUnit || selectUnit == GameManager.Instance.playerUnit) return;
 
             selectUnitObject = unitHit.collider.gameObject;
             selectUnitObjectRenderers = selectUnitObject.GetComponentsInChildren<Renderer>();

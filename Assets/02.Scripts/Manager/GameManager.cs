@@ -27,7 +27,13 @@ public class GameManager : Singleton<GameManager>
     public CameraFade fade;
 
     public Unit playerUnit; // 플레이어 유닛
-    public Unit baseUnit; // 플레이어 기지
+    private Unit baseUnit; // 플레이어 기지
+
+    public Unit BaseUnit
+    {
+        get { return baseUnit; }
+        set { baseUnit = value; }
+    }
 
     public int initSpawnMoney = 500; // 스폰 최초 돈
     public int currentSpawnMoney = 500;
@@ -38,7 +44,24 @@ public class GameManager : Singleton<GameManager>
 
     public Material morningSkybox;
     public Material nightSkybox;
-    
+
+    public int playerUnitDeathCount = 0;
+    public int playerBuildingDeathCount = 0;
+    private int enemyUnitRemainCount = 0;
+    public int enemyUnitDeathCount = 0;
+
+    public int endingDay = 30;
+
+    public int EnemyUnitRemainCount
+    {
+        get { return enemyUnitRemainCount; }
+        set
+        {
+            enemyUnitRemainCount = value;
+            if (value == 0) State = GameState.ENDBATTLE;
+        }
+    }
+
     public int CurrentMoney
     {
         get { return currentMoney; }
@@ -80,13 +103,13 @@ public class GameManager : Singleton<GameManager>
                     Cursor.lockState = CursorLockMode.Confined;
                     break;
                 case GameState.OPENING:
-                    RenderSettings.skybox = morningSkybox;
-                    RenderSettings.fog = (Random.value > 0.5f);
                     Cursor.lockState = CursorLockMode.Confined;
                     Opening();
                     break;
                 case GameState.SETTING:
                     Cursor.lockState = CursorLockMode.Confined;
+                    RenderSettings.skybox = morningSkybox;
+                    RenderSettings.fog = (Random.value > 0.5f);
                     Setting();
                     break;
                 case GameState.STARTBATTLE:
@@ -133,6 +156,14 @@ public class GameManager : Singleton<GameManager>
         currentMoney = initMoney;
     }
 
+    public void CountReset(int enemyCount)
+    {
+        EnemyUnitRemainCount = enemyCount;
+        enemyUnitDeathCount = 0;
+        playerUnitDeathCount = 0;
+        playerBuildingDeathCount = 0;
+    }
+
     // 새로운 날 시작 연출부분 (DAY 0 -> DAY 1)
     void Opening()
     {
@@ -145,11 +176,15 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator OpeningCoroutine()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(fade.fadeTime + 2f);
         // 나팔소리 효과음 추가해야됨
         if(Day == 0)
         {
             State = GameState.SETTING;
+        }
+        else if (Day == endingDay)
+        {
+            State = GameState.ENDING;
         }
         else
         {

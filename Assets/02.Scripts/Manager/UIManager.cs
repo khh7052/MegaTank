@@ -20,6 +20,7 @@ public class UIManager : Singleton<UIManager>
     [Header("Battle")]
     // StartBattle
     public GameObject startBattleUI;
+    public TMP_Text enemyCountText;
 
     // EndBattle
     public GameObject endBattleUI;
@@ -28,14 +29,15 @@ public class UIManager : Singleton<UIManager>
     public TMP_Text saveMoneyText_Report;
     public TMP_Text currentMoneyText_Report;
     public TMP_Text enemyDeathText_Report;
-    
-
 
     [Header("Rest")]
     // Rest
     public GameObject restUI;
     public GameObject buildUI; // -Build
     public GameObject DemolishUI; // -Demolish
+    public TMP_Text bottomExplainText;
+    public TMP_Text TopExplainText;
+    public TMP_Text leftExplainText;
     public TMP_Text currentMoneyText_Rest;
     [Header("Infomation")]
     // inofmation
@@ -50,7 +52,11 @@ public class UIManager : Singleton<UIManager>
     public TMP_Text unitMoveSpeedText;
     public TMP_Text unitDescriptionText;
 
-
+    [Multiline] public string buildExplain;
+    [Multiline] public string infomationExplain;
+    [Multiline] public string placementExplain;
+    [Multiline] public string removeExplain;
+    
 
     private void Awake()
     {
@@ -75,6 +81,10 @@ public class UIManager : Singleton<UIManager>
         startBattleUI.SetActive(false);
         endBattleUI.SetActive(false);
         restUI.SetActive(false);
+
+        leftExplainText.text = "";
+        bottomExplainText.text = "";
+        TopExplainText.text = "";
     }
 
     public void UIUpdate()
@@ -99,6 +109,7 @@ public class UIManager : Singleton<UIManager>
             case GameState.STARTBATTLE:
                 openingUI.SetActive(false);
                 startBattleUI.SetActive(true);
+                EnemyCountUpdate();
                 break;
             case GameState.ENDBATTLE:
                 EndBattleUIUpdate();
@@ -159,6 +170,11 @@ public class UIManager : Singleton<UIManager>
         dayText.text = $"DAY {GameManager.Instance.Day}";
     }
 
+    public void EnemyCountUpdate()
+    {
+        enemyCountText.text = $"³²Àº Àû : {GameManager.Instance.EnemyUnitRemainCount}";
+    }
+
     public void OnReportCheckBtn()
     {
         GameManager.Instance.State = GameState.REST;
@@ -168,7 +184,9 @@ public class UIManager : Singleton<UIManager>
     {
         saveMoneyText_Report.text = $"Å‰µæÇÑ µ· : {GameManager.Instance.saveMoney}";
         currentMoneyText_Report.text = $"ÇöÀç µ· : {GameManager.Instance.CurrentMoney + GameManager.Instance.saveMoney}";
-        enemyDeathText_Report.text = $"»ç¸Á : 0";
+        playerUnitDeathText_Report.text = $"»ç¸ÁÇÑ À¯´Ö : {GameManager.Instance.playerUnitDeathCount}";
+        playerBuildingDestroyText_Report.text = $"ÆÄ±«µÈ °Ç¹° : {GameManager.Instance.playerBuildingDeathCount}";
+        enemyDeathText_Report.text = $"»ç¸ÁÇÑ À¯´Ö : {GameManager.Instance.enemyUnitDeathCount}";
     }
 
     public void RestUIUpdate()
@@ -181,6 +199,7 @@ public class UIManager : Singleton<UIManager>
         if(unit == null)
         {
             infomationUI.SetActive(false);
+            leftExplainText.text = "";
             return;
         }
 
@@ -188,23 +207,34 @@ public class UIManager : Singleton<UIManager>
 
         unitNameText.text = unit.unitName;
         unitSpawnMoneyText.text = $"ºñ¿ë : {unit.spawnMoney}";
-        unitHpText.text = $"Ã¼·Â : {unit.maxHP}";
+        unitHpText.text = $"Ã¼·Â :  {unit.currentHP} / {unit.maxHP}";
         unitArmorText.text = $"¹æ¾î·Â : {unit.armor}";
         unitAttackDamageText.text = $"°ø°Ý·Â : {unit.attackDamage}";
         unitAttackDistanceText.text = $"»ç°Å¸® : {unit.attackDistance}";
         unitAttackRateText.text = $"°ø°Ý¼Óµµ : {unit.attackRate}";
         unitMoveSpeedText.text = $"ÀÌµ¿¼Óµµ : {unit.moveSpeed}";
         unitDescriptionText.text = unit.unitDescription;
-    }
 
+        leftExplainText.text = buildExplain;
+    }
     public void OnBuildBtn()
     {
-
+        leftExplainText.text = buildExplain;
     }
 
-    public void OnDemolishBtn()
+    public void OnInfomationBtn()
     {
+        leftExplainText.text = infomationExplain;
+    }
 
+    public void OnPlacementBtn()
+    {
+        leftExplainText.text = placementExplain;
+    }
+
+    public void OnRemoveBtn()
+    {
+        leftExplainText.text = removeExplain;
     }
 
     public void OnRestEndBtn()

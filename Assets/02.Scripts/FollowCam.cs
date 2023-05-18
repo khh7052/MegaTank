@@ -18,6 +18,8 @@ public class FollowCam : Singleton<FollowCam>
     public float targetOffset = 2.0f;
     private Vector3 velocity = Vector3.zero;
 
+    public bool directMove;
+
     void Start()
     {
         camTr = GetComponent<Transform>();
@@ -52,7 +54,9 @@ public class FollowCam : Singleton<FollowCam>
         // camTr.position = targetTr.position + (-targetTr.forward * distance) + (Vector3.up * height); 规过 1 (position)
         // camTr.position = Vector3.Slerp(camTr.position, pos, Time.deltaTime * damping); // 规过 2 (Slerp/Lerp)
         // 规过 3 (SmoothDamp)
-        camTr.position = Vector3.SmoothDamp(camTr.position, pos, ref velocity, damping);
+
+        if (directMove) camTr.position = pos;
+        else camTr.position = Vector3.SmoothDamp(camTr.position, pos, ref velocity, damping);
         camTr.LookAt(target.position + (target.up * targetOffset));
     }
 }

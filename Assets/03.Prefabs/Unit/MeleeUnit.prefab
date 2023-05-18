@@ -171,6 +171,7 @@ MonoBehaviour:
   OnDisableInit:
     m_PersistentCalls:
       m_Calls: []
+  unitType: 0
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -192,6 +193,10 @@ MonoBehaviour:
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
+  makeCondition:
+    type: 0
+    count: 1
+    needUnit: {fileID: 0}
   team: 1
   unitName: "\uD14C\uC2A4\uD2B8 \uADFC\uC811"
   unitDescription: "\uD14C\uC2A4\uD2B8\uC6A9\uC73C\uB85C \uB9CC\uB4E0 \uADFC\uC811

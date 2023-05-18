@@ -9,11 +9,56 @@ public enum Team
     ENEMY
 }
 
+public enum UnitType
+{
+    UNIT,
+    BUILDING
+}
+
+public enum ConditionType
+{
+    NONE, // 조건없음
+    LIMIT, // 자신의 개수 제한
+    NEED, // 필요한 유닛
+}
+
+[System.Serializable]
+public class Condition
+{
+    public ConditionType type;
+    public int count = 1;
+    public Unit needUnit;
+
+    public bool ConditionCheck(Unit myUnit)
+    {
+        switch (type)
+        {
+            case ConditionType.NONE:
+                return true;
+            case ConditionType.LIMIT:
+                if (PoolManager.Instance.poolList.ContainsKey(myUnit.gameObject) == false) return true; // 만든적 없으면 true
+                return PoolManager.Instance.poolList[myUnit.gameObject].Count < count; // 만든 개수가 제한보다 적으면 true
+            case ConditionType.NEED:
+                foreach (GameObject g in PoolManager.Instance.poolList[needUnit.gameObject])
+                {
+                    if (g.activeInHierarchy) return true; // 현재 필요한 유닛이 존재하면 true
+                }
+
+                return false;
+        }
+
+        return false;
+    }
+}
+
 public class Unit : InitSystem
 {
+
+    public UnitType unitType;
     public UnityEvent OnDeath = new();
     public UnityEvent OnAttack = new();
     public UnityEvent<int, Unit> OnDamage = new();
+    public Condition makeCondition;
     public Team team;
 
     public string unitName = "";
@@ -83,10 +128,6 @@ public class Unit : InitSystem
     {
         currentHP = maxHP;
 
-        if (team == Team.ENEMY) {
-            SpawnManager.Instance.RemainSpawnUnit++;
-        }
-
         base.EnableInit();
     }
 
@@ -113,12 +154,22 @@ public class Unit : InitSystem
 
     public virtual void Death()
     {
+        if(team == Team.PLAYER)
+        {
+            if(unitType == UnitType.UNIT)
+            {
+                GameManager.Instance.playerUnitDeathCount++;
+                if (this == GameManager.Instance.playerUnit) GameManager.Instance.State = GameState.ENDING; // 플레이어가 죽으면 엔딩
+            }
+            else if (unitType == UnitType.BUILDING) GameManager.Instance.playerBuildingDeathCount++;
+        }
         if (team == Team.ENEMY)
         {
             GameManager.Instance.saveMoney += deathMoney;
-            SpawnManager.Instance.RemainSpawnUnit--;
+            GameManager.Instance.enemyUnitDeathCount++;
+            GameManager.Instance.EnemyUnitRemainCount--;
+            UIManager.Instance.EnemyCountUpdate();
         }
-        
 
         OnDeath.Invoke();
         if(destroyImpact) PoolManager.Instance.Pop(destroyImpact, transform.position, transform.rotation);

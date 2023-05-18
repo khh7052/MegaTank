@@ -83,7 +83,7 @@ public class AIController : Controller
         agent.angularSpeed = owner.rotateSpeed;
         agent.stoppingDistance = owner.attackDistance;
         owner.OnDamage.AddListener(DamageTarget);
-        if(owner.team == Team.ENEMY) mainTarget = GameManager.Instance.baseUnit;
+        if(owner.team == Team.ENEMY) mainTarget = GameManager.Instance.BaseUnit;
         ResetTarget();
         StartCoroutine(StateUpdate());
     }
@@ -169,6 +169,12 @@ public class AIController : Controller
         Target = mainTarget;
     }
     
+    void AgentPosRepair()
+    {
+        if (agent.isOnNavMesh) return;
+
+        agent.transform.position = agent.pathEndPosition;
+    }
 
     public virtual void TargetUpdate()
     {
@@ -211,7 +217,7 @@ public class AIController : Controller
         while (true)
         {
             while (GameManager.Instance.State != GameState.STARTBATTLE) yield return wait;
-
+            AgentPosRepair();
             TargetUpdate();
 
             if(target == null)
