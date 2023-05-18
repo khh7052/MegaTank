@@ -9,6 +9,11 @@ public class SoundManager : Singleton<SoundManager>
     public AudioMixer audioMixer;
     private AudioSource source;
 
+    public AudioClip openingBGM;
+    public AudioClip startBattleBGM;
+    public AudioClip endBattleBGM;
+    public AudioClip restBGM;
+
     public float BGMVolume
     {
         set
@@ -30,9 +35,11 @@ public class SoundManager : Singleton<SoundManager>
         source = GetComponent<AudioSource>();
     }
 
-    public void PlaySound(AudioClip clip)
+    public void PlayBGM(AudioClip clip)
     {
-        source.PlayOneShot(clip);
+        if(clip == null) source.Stop();
+        source.clip = clip;
+        source.Play();
     }
 
     public void PlaySound(AudioClip[] clips)
@@ -42,21 +49,25 @@ public class SoundManager : Singleton<SoundManager>
         source.PlayOneShot(clips[rand]);
     }
 
-    public void VolumeUpdate()
+    public void SoundUpdate()
     {
         switch (GameManager.Instance.State)
         {
             case GameState.LOBBY:
                 break;
             case GameState.OPENING:
+                PlayBGM(openingBGM);
                 SFXVolume = -80;
                 break;
             case GameState.STARTBATTLE:
+                PlayBGM(startBattleBGM);
                 SFXVolume = 0;
                 break;
             case GameState.ENDBATTLE:
+                PlayBGM(endBattleBGM);
                 break;
             case GameState.REST:
+                PlayBGM(restBGM);
                 break;
         }
     }

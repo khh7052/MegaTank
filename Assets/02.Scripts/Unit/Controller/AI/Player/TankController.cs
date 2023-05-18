@@ -38,6 +38,7 @@ public class TankController : Controller
 
     #endregion
 
+
     void Update()
     {
         if (GameManager.Instance.State != GameState.STARTBATTLE) return; // 전투 아니면 안움직임
@@ -59,7 +60,15 @@ public class TankController : Controller
     public override void AwakeInit()
     {
         aimRectTransform = aimImage.rectTransform;
+        GameManager.Instance.OnStateChange.AddListener(() => VolumeReset());
         base.AwakeInit();
+    }
+
+    void VolumeReset()
+    {
+        moveVertical = 0;
+        rotHorizon = 0;
+        MoveVolumeUpdate();
     }
 
     void AimImageUpdate()

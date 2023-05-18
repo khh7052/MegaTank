@@ -9,6 +9,7 @@ public enum GameState
 {
     LOBBY,
     OPENING,
+    SETTING,
     STARTBATTLE, // 전투 시작
     ENDBATTLE, // 전투 끝
     REST, // 정비
@@ -17,11 +18,12 @@ public enum GameState
 
 public class GameManager : Singleton<GameManager>
 {
-    // public UnityEvent OnOpening;
+    public UnityEvent OnOpening;
     public UnityEvent OnStartBattle;
     public UnityEvent OnEndBattle;
     public UnityEvent OnRest;
     public UnityEvent OnEnding;
+    public UnityEvent OnStateChange;
     public CameraFade fade;
 
     public Unit playerUnit; // 플레이어 유닛
@@ -33,6 +35,9 @@ public class GameManager : Singleton<GameManager>
     private int currentMoney = 500;
     public int saveMoney = 0;
     public float plusSpawnMoney = 1.2f; // 스폰 돈 증가량
+
+    public Material morningSkybox;
+    public Material nightSkybox;
     
     public int CurrentMoney
     {
@@ -48,7 +53,7 @@ public class GameManager : Singleton<GameManager>
     public LayerMask obstacleLayerMask;
     public LayerMask terrainLayerMask;
 
-    private int day = 0;
+    private int day = -1;
 
     public int Day
     {
@@ -75,8 +80,14 @@ public class GameManager : Singleton<GameManager>
                     Cursor.lockState = CursorLockMode.Confined;
                     break;
                 case GameState.OPENING:
+                    RenderSettings.skybox = morningSkybox;
+                    RenderSettings.fog = (Random.value > 0.5f);
                     Cursor.lockState = CursorLockMode.Confined;
                     Opening();
+                    break;
+                case GameState.SETTING:
+                    Cursor.lockState = CursorLockMode.Confined;
+                    Setting();
                     break;
                 case GameState.STARTBATTLE:
                     Cursor.lockState = CursorLockMode.Locked;
@@ -87,6 +98,8 @@ public class GameManager : Singleton<GameManager>
                     EndBattle();
                     break;
                 case GameState.REST:
+                    RenderSettings.skybox = nightSkybox;
+                    RenderSettings.fog = false;
                     Cursor.lockState = CursorLockMode.Confined;
                     Rest();
                     break;
@@ -97,9 +110,10 @@ public class GameManager : Singleton<GameManager>
                     break;
             }
 
-            SoundManager.Instance.VolumeUpdate();
+            SoundManager.Instance.SoundUpdate();
             FollowCam.Instance.CamTargetUpdate();
             UIManager.Instance.UIUpdate();
+            OnStateChange.Invoke();
         }
     }
 
@@ -125,7 +139,7 @@ public class GameManager : Singleton<GameManager>
         currentSpawnMoney += (int)(currentSpawnMoney * plusSpawnMoney); // Spawn 돈 증가
         Day++; // Day 증가
         fade.FadeOut();
-        // OnOpening.Invoke();
+        OnOpening.Invoke();
         StartCoroutine(OpeningCoroutine());
     }
 
@@ -133,15 +147,25 @@ public class GameManager : Singleton<GameManager>
     {
         yield return new WaitForSeconds(3f);
         // 나팔소리 효과음 추가해야됨
-        
-        State = GameState.STARTBATTLE;
+        if(Day == 0)
+        {
+            State = GameState.SETTING;
+        }
+        else
+        {
+            State = GameState.STARTBATTLE;
+        }
+    }
+
+    void Setting()
+    {
+        fade.FadeIn();
+        Rest();
     }
 
     // 전투 시작
     void StartBattle()
     {
-        // 적 currentSpawnMoney만큼 스폰
-        // 탱크 위치 기지 앞에서 시작
         fade.FadeIn();
         SpawnManager.Instance.Spawn();
         OnStartBattle.Invoke();

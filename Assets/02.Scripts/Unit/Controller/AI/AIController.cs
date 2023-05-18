@@ -210,6 +210,8 @@ public class AIController : Controller
     {
         while (true)
         {
+            while (GameManager.Instance.State != GameState.STARTBATTLE) yield return wait;
+
             TargetUpdate();
 
             if(target == null)

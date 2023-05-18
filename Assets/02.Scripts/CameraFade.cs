@@ -15,6 +15,12 @@ public class CameraFade : MonoBehaviour
     public float Alpha
     {
         get { return fadeImage.color.a; }
+        set
+        {
+            Color c = fadeImage.color;
+            c.a = value;
+            fadeImage.color = c;
+        }
     }
 
     public void FadeIn()

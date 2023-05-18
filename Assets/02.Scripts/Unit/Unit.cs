@@ -49,7 +49,6 @@ public class Unit : InitSystem
     public AudioSource audioSoruce;
     public AudioClip moveSound;
     public AudioClip attackSound;
-    
 
     // HP
     public bool IsDying
@@ -125,4 +124,5 @@ public class Unit : InitSystem
         if(destroyImpact) PoolManager.Instance.Pop(destroyImpact, transform.position, transform.rotation);
         gameObject.SetActive(false);
     }
+
 }

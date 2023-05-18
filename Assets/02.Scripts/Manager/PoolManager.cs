@@ -9,7 +9,7 @@ public class PoolManager : Singleton<PoolManager>
     // 추가
     public GameObject Push(GameObject pool)
     {
-        return Push(pool, pool.transform.position, pool.transform.rotation);
+        return Push(pool, transform.position, pool.transform.rotation);
     }
 
     public GameObject Push(GameObject pool, Vector3 pos, Quaternion rot)
@@ -28,7 +28,7 @@ public class PoolManager : Singleton<PoolManager>
     // 활성화
     public GameObject Pop(GameObject pool)
     {
-        return Pop(pool, pool.transform.position, pool.transform.rotation);
+        return Pop(pool, transform.position, pool.transform.rotation);
     }
 
     public GameObject Pop(GameObject pool, Vector3 pos, Quaternion rot)

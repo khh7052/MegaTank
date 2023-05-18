@@ -1,182 +1,196 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.EventSystems;
 
 public enum MouseType
 {
     NONE,
-    BUILD,
-    DEMOLISH,
+    SPAWN,
+    REMOVE,
 }
 
 public class BuildingManager : Singleton<BuildingManager>
 {
-    public List<GameObject> buildings;
-    private Unit currentUnit;
-    public bool isBuilding = false;
-    RaycastHit hit;
+    private Unit selectUnit;
+    private GameObject selectUnitObject;
     public float rotateSpeed = 5f;
 
-    public Material selectMaterial;
-    public Material focusDemolishMaterial;
+    public Material spawnMaterial;
+    public Material removeMaterial;
     private Material originalMaterial;
+    
+    private Renderer[] selectUnitObjectRenderers;
+    
+    public Material UnitMaterial
+    {
+        get { return Instantiate(selectUnitObjectRenderers[0].material); }
+        set {
+            foreach (Renderer renderer in selectUnitObjectRenderers)
+            {
+                renderer.material = value;
+            }
+            // selectUnitObjectRenderer.material = value;
+        }
+    }
+    
+    public MouseType mouseType;
+    public RaycastHit unitHit;
+    public RaycastHit terrainHit;
 
     [Header("Sound")]
     public AudioSource audioSource;
-    public AudioClip buildSound;
-    public AudioClip demolishSound;
+    public AudioClip spawnSound;
+    public AudioClip removeSound;
 
-    public GameObject SelectObject
-    {
-        get { return currentUnit.gameObject; }
-    }
-
-    public Material UnitMaterial
-    {
-        get { return currentUnit.GetComponent<Renderer>().material; }
-        set
-        {
-            currentUnit.GetComponent<Renderer>().material = value;
-        }
-    }
-
-    public MouseType mouseType;
+    public Color spawnColor;
+    public Color removeColor;
+    private Color originalColor;
 
     private void Awake()
     {
-        StopBuild();
-        GameManager.Instance.OnRest.AddListener(()=> mouseType = MouseType.NONE);
+        GameManager.Instance.OnRest.AddListener(Init);
+        GameManager.Instance.OnOpening.AddListener(Init);
     }
 
     private void Update()
     {
+        if (EventSystem.current.IsPointerOverGameObject()) return; // UI 위에 마우스 있을 때 중단
+
+        MouseHitUpdate();
+
         switch (mouseType)
         {
             case MouseType.NONE:
                 break;
-            case MouseType.BUILD:
-                if (Input.GetKey(KeyCode.Q)) RotateBuilding(-1);
-                if (Input.GetKey(KeyCode.E)) RotateBuilding(1);
+            case MouseType.SPAWN:
+                if (Input.GetKey(KeyCode.Q)) SelectUnitObjectRotate(-1);
+                if (Input.GetKey(KeyCode.E)) SelectUnitObjectRotate(1);
 
-                if (currentUnit)
+                if (selectUnitObject)
                 {
-                    MoveBuilding();
-                    if (Input.GetMouseButtonDown(0)) Build();
-                    else if (Input.GetMouseButtonDown(1)) StopBuild();
+                    SelectUnitObjectMove();
+                    if (Input.GetMouseButtonDown(0)) Spawn();
+                    else if (Input.GetMouseButtonDown(1)) Init();
                 }
                 break;
-            case MouseType.DEMOLISH:
-                LastFocusUnitUpdate();
-                if (Input.GetMouseButtonDown(0))
-                {
-                    Demolish();
-                }
+            case MouseType.REMOVE:
+                RemoveUnitUpdate();
+                if (Input.GetMouseButtonDown(0)) SelectUnitRemove();
+                else if (Input.GetMouseButtonDown(1)) Init();
                 break;
-
         }
     }
 
-    void LastFocusUnitUpdate()
+    void MouseHitUpdate()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, GameManager.Instance.unitLayerMask))
-        {
-            currentUnit = hit.collider.GetComponent<Unit>();
-            originalMaterial = UnitMaterial;
-        }
-        else
-        {
-            if (currentUnit)
-            {
-                UnitMaterial = originalMaterial;
-                currentUnit = null;
-                originalMaterial = null;
-            }
-        }
+        Physics.Raycast(ray, out unitHit, Mathf.Infinity, GameManager.Instance.unitLayerMask);
+        Physics.Raycast(ray, out terrainHit, Mathf.Infinity, GameManager.Instance.terrainLayerMask);
     }
 
-    void Build()
+    void Init()
     {
-        if (currentUnit == null) return;
-        if (GameManager.Instance.CurrentMoney < currentUnit.spawnMoney) return;
-        GameManager.Instance.CurrentMoney -= currentUnit.spawnMoney;
-        UnitMaterial = originalMaterial;
-        CurrentUnitInit(currentUnit);
-
-        audioSource.clip = buildSound;
-        audioSource.Play();
-
-        if (GameManager.Instance.CurrentMoney < currentUnit.spawnMoney) StopBuild();
+        if (mouseType == MouseType.SPAWN) SelectUnitReset();
+        if (mouseType == MouseType.REMOVE) SelectUnitMaterialReset();
+        mouseType = MouseType.NONE;
     }
 
-    void CurrentUnitInit(Unit unit = null)
+    void SelectUnitReset()
     {
-        if(unit == null)
+        if (selectUnit)
         {
-            if (currentUnit)
-            {
-                SelectObject.SetActive(false);
-                UnitMaterial = originalMaterial;
-            }
-
-            currentUnit = null;
-            originalMaterial = null;
-        }
-        else
-        {
-            PoolManager.Instance.Pop(unit.gameObject);
-            currentUnit = unit;
-            originalMaterial = UnitMaterial;
-            if(mouseType == MouseType.BUILD) UnitMaterial = selectMaterial;
-            else if (mouseType == MouseType.DEMOLISH) UnitMaterial = focusDemolishMaterial;
+            UnitMaterial = originalMaterial;
+            selectUnitObject.SetActive(false);
         }
     }
 
-    public void StartDemolish()
+    void SelectUnitMaterialReset()
     {
-        mouseType = MouseType.DEMOLISH;
+        if (selectUnit)
+        {
+            UnitMaterial = originalMaterial;
+        }
     }
 
-    public void StartBuild(Unit unit)
+
+    void SpawnInit(Unit unit)
+    {
+        selectUnitObject = PoolManager.Instance.Pop(unit.gameObject);
+        selectUnitObjectRenderers = selectUnitObject.GetComponentsInChildren<Renderer>();
+        selectUnit = unit;
+        originalMaterial = selectUnitObject.GetComponentsInChildren<Renderer>()[0].material;
+        UnitMaterial = spawnMaterial;
+        mouseType = MouseType.SPAWN;
+    }
+
+    // SPAWN
+    public void StartSpawn(Unit unit)
     {
         if (GameManager.Instance.CurrentMoney < unit.spawnMoney) return;
-        mouseType = MouseType.BUILD;
-        isBuilding = true;
-        CurrentUnitInit(unit);
+        Init();
+        SpawnInit(unit);
     }
 
-    public void StopBuild()
+    void Spawn()
     {
-        isBuilding = false;
-        CurrentUnitInit();
+        if (selectUnit == null) return;
+        if (GameManager.Instance.CurrentMoney < selectUnit.spawnMoney) return;
+
+        GameManager.Instance.CurrentMoney -= selectUnit.spawnMoney;
+        UnitMaterial = originalMaterial;
+        SpawnInit(selectUnit);
+
+        audioSource.clip = spawnSound;
+        audioSource.Play();
+
+        if (GameManager.Instance.CurrentMoney < selectUnit.spawnMoney) Init();
     }
 
-    void MoveBuilding()
+    
+    void SelectUnitObjectMove()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        selectUnitObject.transform.position = terrainHit.point;
+    }
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, GameManager.Instance.terrainLayerMask))
+    // 선택유닛 회전
+    void SelectUnitObjectRotate(float dir)
+    {
+        selectUnitObject.transform.Rotate(0, dir * Time.deltaTime * rotateSpeed, 0);
+    }
+
+    // Remove
+    public void StartRemove()
+    {
+        Init();
+        mouseType = MouseType.REMOVE;
+    }
+
+    void RemoveUnitUpdate()
+    {
+        SelectUnitMaterialReset();
+
+        if (unitHit.collider)
         {
-            SelectObject.transform.position = hit.point;
+            selectUnit = unitHit.collider.GetComponent<Unit>();
+            if (selectUnit == null) return;
+            if (selectUnit == GameManager.Instance.baseUnit || selectUnit == GameManager.Instance.playerUnit) return;
+
+            selectUnitObject = unitHit.collider.gameObject;
+            selectUnitObjectRenderers = selectUnitObject.GetComponentsInChildren<Renderer>();
+            originalMaterial = selectUnitObject.GetComponentsInChildren<Renderer>()[0].material;
+            UnitMaterial = removeMaterial;
         }
     }
 
-    void RotateBuilding(float dir)
+    void SelectUnitRemove()
     {
-        SelectObject.transform.Rotate(0, dir * Time.deltaTime * rotateSpeed, 0);
-    }
+        if (selectUnitObject == null) return;
 
+        GameManager.Instance.CurrentMoney += selectUnit.spawnMoney;
+        SelectUnitReset();
 
-    void Demolish()
-    {
-        if (currentUnit == null) return;
-
-        currentUnit.gameObject.SetActive(false);
-        GameManager.Instance.CurrentMoney += currentUnit.spawnMoney;
-
-        audioSource.clip = demolishSound;
+        audioSource.clip = removeSound;
         audioSource.Play();
     }
 

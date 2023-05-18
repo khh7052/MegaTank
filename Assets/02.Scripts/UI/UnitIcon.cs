@@ -11,6 +11,6 @@ public class UnitIcon : MonoBehaviour
     public void PassInfomation()
     {
         UIManager.Instance.InfomationUIUpdate(unit);
-        BuildingManager.Instance.StartBuild(unit);
+        BuildingManager.Instance.StartSpawn(unit);
     }
 }

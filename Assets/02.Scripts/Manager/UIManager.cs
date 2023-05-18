@@ -79,6 +79,8 @@ public class UIManager : Singleton<UIManager>
 
     public void UIUpdate()
     {
+        optionUI.SetActive(false);
+
         switch (GameManager.Instance.State)
         {
             case GameState.LOBBY:
@@ -87,6 +89,12 @@ public class UIManager : Singleton<UIManager>
                 restUI.SetActive(false);
                 openingUI.SetActive(true);
                 DayTextUpdate();
+                break;
+            case GameState.SETTING:
+                RestUIUpdate();
+                infomationUI.SetActive(false);
+                openingUI.SetActive(false);
+                restUI.SetActive(true);
                 break;
             case GameState.STARTBATTLE:
                 openingUI.SetActive(false);
@@ -100,6 +108,7 @@ public class UIManager : Singleton<UIManager>
                 break;
             case GameState.REST:
                 RestUIUpdate();
+                infomationUI.SetActive(false);
                 endBattleUI.SetActive(false);
                 restUI.SetActive(true);
                 break;
@@ -169,6 +178,12 @@ public class UIManager : Singleton<UIManager>
 
     public void InfomationUIUpdate(Unit unit)
     {
+        if(unit == null)
+        {
+            infomationUI.SetActive(false);
+            return;
+        }
+
         if(infomationUI.activeInHierarchy == false) infomationUI.SetActive(true);
 
         unitNameText.text = unit.unitName;
