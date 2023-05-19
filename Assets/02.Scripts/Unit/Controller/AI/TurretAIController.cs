@@ -39,7 +39,7 @@ public class TurretAIController : AIController
         {
             foreach (var coll in chaseColliders)
             {
-                Unit unit = coll.GetComponent<Unit>();
+                Unit unit = coll.GetComponentInParent<Unit>();
                 if (unit == null) continue;
                 if (unit.team == owner.team) continue; // ∞∞¿∫∆¿¿Ã∏È ≥—±Ë
 
@@ -60,7 +60,7 @@ public class TurretAIController : AIController
         {
             foreach (var coll in chaseColliders)
             {
-                Unit unit = coll.GetComponent<Unit>();
+                Unit unit = coll.GetComponentInParent<Unit>();
                 if (unit == null) continue;
                 if (unit.team == owner.team) continue; // ∞∞¿∫∆¿¿Ã∏È ≥—±Ë
 

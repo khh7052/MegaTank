@@ -4894,7 +4894,11 @@ MonoBehaviour:
   OnDisableInit:
     m_PersistentCalls:
       m_Calls: []
+  unitType: 0
   OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnMove:
     m_PersistentCalls:
       m_Calls: []
   OnAttack:
@@ -4915,6 +4919,10 @@ MonoBehaviour:
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
+  makeCondition:
+    type: 0
+    count: 1
+    needUnit: {fileID: 0}
   team: 1
   unitName: "\uD0F1\uD06C"
   unitDescription: 
@@ -4941,7 +4949,7 @@ MonoBehaviour:
   muzzle: {fileID: 1162831889799520, guid: 4bdb09eec45ab614c8ce48a366a46fb0, type: 3}
   spPoint: {fileID: 3667831324819545391}
   turretRotSpeed: 20
-  turretWheelSpeed: 2
+  turretWheelSpeed: 1
   turret: {fileID: 8096634340796995929}
   turretMinAngle: -10
   turretMaxAngle: 20

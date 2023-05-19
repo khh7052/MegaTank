@@ -226,7 +226,7 @@ public class BuildingManager : Singleton<BuildingManager>
         {
             selectUnit = unitHit.collider.GetComponent<Unit>();
             if (selectUnit == null) return;
-            if (selectUnit == GameManager.Instance.BaseUnit || selectUnit == GameManager.Instance.playerUnit) return;
+            if (selectUnit == GameManager.Instance.baseUnit || selectUnit == GameManager.Instance.playerUnit) return;
 
             selectUnitObject = unitHit.collider.gameObject;
             selectUnitObjectRenderers = selectUnitObject.GetComponentsInChildren<Renderer>();

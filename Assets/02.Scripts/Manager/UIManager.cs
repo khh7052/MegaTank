@@ -6,6 +6,9 @@ using TMPro;
 
 public class UIManager : Singleton<UIManager>
 {
+    [Header("Ohter")]
+    public Image fadeImage;
+
     // Option
     [Header("Option")]
     public GameObject optionUI;
@@ -56,7 +59,9 @@ public class UIManager : Singleton<UIManager>
     [Multiline] public string infomationExplain;
     [Multiline] public string placementExplain;
     [Multiline] public string removeExplain;
-    
+
+    public GameObject endingUI;
+    public TMP_Text endingText;
 
     private void Awake()
     {
@@ -98,15 +103,21 @@ public class UIManager : Singleton<UIManager>
             case GameState.OPENING:
                 restUI.SetActive(false);
                 openingUI.SetActive(true);
+                UIFade.Instance.FadeUI(fadeImage, 0, 1);
+                UIFade.Instance.FadeUI(dayText, 0, 1);
                 DayTextUpdate();
                 break;
             case GameState.SETTING:
                 RestUIUpdate();
+                UIFade.Instance.FadeUI(fadeImage, 1, 0);
+                UIFade.Instance.FadeUI(dayText, 1, 0);
                 infomationUI.SetActive(false);
                 openingUI.SetActive(false);
                 restUI.SetActive(true);
                 break;
             case GameState.STARTBATTLE:
+                UIFade.Instance.FadeUI(fadeImage, 1, 0);
+                UIFade.Instance.FadeUI(dayText, 1, 0);
                 openingUI.SetActive(false);
                 startBattleUI.SetActive(true);
                 EnemyCountUpdate();
@@ -122,6 +133,11 @@ public class UIManager : Singleton<UIManager>
                 infomationUI.SetActive(false);
                 endBattleUI.SetActive(false);
                 restUI.SetActive(true);
+                break;
+            case GameState.ENDING:
+                RestUIUpdate();
+                startBattleUI.SetActive(false);
+                endingUI.SetActive(true);
                 break;
         }
     }

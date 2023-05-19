@@ -83,7 +83,7 @@ public class AIController : Controller
         agent.angularSpeed = owner.rotateSpeed;
         agent.stoppingDistance = owner.attackDistance;
         owner.OnDamage.AddListener(DamageTarget);
-        if(owner.team == Team.ENEMY) mainTarget = GameManager.Instance.BaseUnit;
+        if(owner.team == Team.ENEMY) mainTarget = GameManager.Instance.baseUnit;
         ResetTarget();
         StartCoroutine(StateUpdate());
     }
@@ -147,6 +147,7 @@ public class AIController : Controller
     {
         agent.stoppingDistance = 0;
         owner.Attack(target);
+        // agent.Move(-TargetDir * owner.moveSpeed);
         agent.SetDestination(transform.position - (TargetDir * owner.moveSpeed));
     }
 
@@ -194,7 +195,7 @@ public class AIController : Controller
         {
             foreach (var coll in chaseColliders)
             {
-                Unit unit = coll.GetComponent<Unit>();
+                Unit unit = coll.GetComponentInParent<Unit>();
                 if (unit == null) continue;
                 if (unit.team == owner.team) continue; // ∞∞¿∫∆¿¿Ã∏È ≥—±Ë
 

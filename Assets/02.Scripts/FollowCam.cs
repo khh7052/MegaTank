@@ -50,6 +50,8 @@ public class FollowCam : Singleton<FollowCam>
     // Update is called once per frame
     void LateUpdate()
     {
+        if (GameManager.Instance.State == GameState.ENDING || GameManager.Instance.State == GameState.LOBBY) return;
+
         Vector3 pos = target.position + (-target.forward * distance) + (Vector3.up * height);
         // camTr.position = targetTr.position + (-targetTr.forward * distance) + (Vector3.up * height); 规过 1 (position)
         // camTr.position = Vector3.Slerp(camTr.position, pos, Time.deltaTime * damping); // 规过 2 (Slerp/Lerp)

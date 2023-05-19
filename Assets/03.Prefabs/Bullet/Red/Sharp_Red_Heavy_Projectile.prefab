@@ -14541,7 +14541,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.2
-  m_Height: 3
+  m_Height: 2
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: -0.5}
 --- !u!114 &-1631363847973862296
@@ -14579,6 +14579,7 @@ MonoBehaviour:
   OnDisableInit:
     m_PersistentCalls:
       m_Calls: []
+  owner: {fileID: 0}
   rb: {fileID: 2848722174067558447}
   impact: {fileID: 8054032970659203145, guid: 088fd02c432decd46934a98fe9671ec2, type: 3}
   power: 600

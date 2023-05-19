@@ -31,6 +31,7 @@ public class Tank : RangedUnit
 
     #endregion
 
+
     // 이동 볼륨 업데이트
     public void VolumeUpdate(float v)
     {
@@ -41,7 +42,11 @@ public class Tank : RangedUnit
     {
         // 전진 후진
         move = moveSpeed * Time.deltaTime;
-        transform.Translate(move * vertical * Vector3.forward);
+
+        // agent.destination = transform.position + moveSpeed * vertical * transform.forward;
+        // agent.SetDestination(transform.position + move * vertical * transform.forward);
+        agent.Move(move * vertical * transform.forward);
+        // transform.Translate(move * vertical * Vector3.forward);
 
         // 좌우 이동
         rotate = rotateSpeed * Time.deltaTime;
@@ -53,21 +58,21 @@ public class Tank : RangedUnit
     {
         rotate = turretRotSpeed * Time.deltaTime;
         // 터렛 좌우 이동
-        turret.transform.Rotate(x * rotate * Vector3.up);
+        gunBase.transform.Rotate(x * rotate * Vector3.up);
 
         // 포신 상하 회전
-        gunBase.transform.Rotate(wheel * turretWheelSpeed * Vector3.right);
+        turret.transform.Rotate(wheel * turretWheelSpeed * Vector3.right);
 
         TurretClamp();
     }
 
     public void TurretClamp()
     {
-        Vector3 ang = gunBase.transform.eulerAngles;
+        Vector3 ang = turret.transform.eulerAngles;
         if (ang.x > 180) ang.x -= 360;
 
         ang.x = Mathf.Clamp(ang.x, turretMinAngle, turretMaxAngle);
-        gunBase.transform.eulerAngles = ang;
+        turret.transform.eulerAngles = ang;
     }
     
 }

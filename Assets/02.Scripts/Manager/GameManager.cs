@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
-using TMPro;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -24,16 +23,10 @@ public class GameManager : Singleton<GameManager>
     public UnityEvent OnRest;
     public UnityEvent OnEnding;
     public UnityEvent OnStateChange;
-    public CameraFade fade;
 
     public Unit playerUnit; // 플레이어 유닛
-    private Unit baseUnit; // 플레이어 기지
+    public Unit baseUnit; // 플레이어 기지
 
-    public Unit BaseUnit
-    {
-        get { return baseUnit; }
-        set { baseUnit = value; }
-    }
 
     public int initSpawnMoney = 500; // 스폰 최초 돈
     public int currentSpawnMoney = 500;
@@ -128,6 +121,7 @@ public class GameManager : Singleton<GameManager>
                     break;
                 case GameState.ENDING:
                     Cursor.lockState = CursorLockMode.Confined;
+                    Ending();
                     break;
                 default:
                     break;
@@ -169,14 +163,13 @@ public class GameManager : Singleton<GameManager>
     {
         currentSpawnMoney += (int)(currentSpawnMoney * plusSpawnMoney); // Spawn 돈 증가
         Day++; // Day 증가
-        fade.FadeOut();
         OnOpening.Invoke();
         StartCoroutine(OpeningCoroutine());
     }
 
     IEnumerator OpeningCoroutine()
     {
-        yield return new WaitForSeconds(fade.fadeTime + 2f);
+        yield return new WaitForSeconds(UIFade.Instance.fadeTime + 2f);
         // 나팔소리 효과음 추가해야됨
         if(Day == 0)
         {
@@ -194,19 +187,17 @@ public class GameManager : Singleton<GameManager>
 
     void Setting()
     {
-        fade.FadeIn();
         Rest();
     }
 
     // 전투 시작
     void StartBattle()
     {
-        fade.FadeIn();
         SpawnManager.Instance.Spawn();
         OnStartBattle.Invoke();
     }
 
-    // 
+    // 전투 종료
     void EndBattle()
     {
         OnEndBattle.Invoke();
@@ -218,6 +209,18 @@ public class GameManager : Singleton<GameManager>
         currentMoney += saveMoney;
         saveMoney = 0;
         OnRest.Invoke();
+    }
+
+    void Ending()
+    {
+        if(Day == endingDay)
+        {
+            SceneManager.LoadScene(2);
+        }
+        else
+        {
+            SceneManager.LoadScene(3);
+        }
     }
     
 }

@@ -11,7 +11,11 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         {
             if(instance == null) instance = FindObjectOfType<T>();
             if(instance == null) instance = new GameObject().AddComponent<T>();
-
+            else
+            {
+                if(instance.transform.parent != null) DontDestroyOnLoad(instance.transform.parent);
+                else DontDestroyOnLoad(instance.gameObject);
+            }
             return instance;
         }
         set { instance = value; }

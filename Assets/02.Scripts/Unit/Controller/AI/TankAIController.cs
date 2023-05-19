@@ -6,13 +6,10 @@ using UnityEngine.EventSystems;
 
 public class TankAIController : AIController
 {
-    #region ¸â¹ö º¯¼ö
-
     public Tank myTank;
-    private float turretRot = 1;
+    private float turretHorizonRot = 1;
+    private float turretVerticalRot = 1;
     private bool attackOn = false;
-
-    #endregion
 
     void Update()
     {
@@ -46,19 +43,26 @@ public class TankAIController : AIController
             Vector3 direction = myTank.transform.forward;
             Vector3 targetDir = target.transform.position - transform.position;
             float angle = Vector3.SignedAngle(targetDir, direction, Vector3.up);
-            if (angle < -5.0F) turretRot = 1;
-            else if (angle > 5.0F) turretRot = -1;
-            else turretRot = 0;
-            myTank.TankMove(0, turretRot);
+            if (angle < -5.0F) turretHorizonRot = 1;
+            else if (angle > 5.0F) turretHorizonRot = -1;
+            else turretHorizonRot = 0;
+            myTank.TankMove(0, turretHorizonRot);
 
             direction = myTank.turret.transform.forward;
             angle = Vector3.SignedAngle(targetDir, direction, Vector3.up);
             attackOn = -10.0F <= angle && angle <= 10.0F;
             
-            if (angle < -1.0F) turretRot = 1;
-            else if (angle > 1.0F) turretRot = -1;
-            else turretRot = 0;
-            myTank.TurretMove(turretRot, 0);
+            if (angle < -1.0F) turretHorizonRot = 1;
+            else if (angle > 1.0F) turretHorizonRot = -1;
+            else turretHorizonRot = 0;
+
+            targetDir = targetDir.normalized;
+            if (targetDir.y > direction.y) turretVerticalRot = -1;
+            else if (targetDir.y < direction.y) turretVerticalRot = 1;
+            else turretVerticalRot = 0;
+
+            myTank.TurretMove(turretHorizonRot, turretVerticalRot);
+            
         }
     }
 }

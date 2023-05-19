@@ -6,6 +6,6 @@ public class AutoBaseUnit : MonoBehaviour
 {
     private void Start()
     {
-        GameManager.Instance.BaseUnit = GetComponent<Unit>();
+        GameManager.Instance.baseUnit = GetComponent<Unit>();
     }
 }

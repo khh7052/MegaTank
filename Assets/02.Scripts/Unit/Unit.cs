@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.AI;
 
 public enum Team
 {
@@ -51,11 +52,13 @@ public class Condition
     }
 }
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class Unit : InitSystem
 {
-
+    protected NavMeshAgent agent;
     public UnitType unitType;
     public UnityEvent OnDeath = new();
+    public UnityEvent OnMove = new();
     public UnityEvent OnAttack = new();
     public UnityEvent<int, Unit> OnDamage = new();
     public Condition makeCondition;
@@ -122,6 +125,7 @@ public class Unit : InitSystem
     {
         aiController = GetComponent<AIController>();
         rb = GetComponent<Rigidbody>();
+        agent = GetComponent<NavMeshAgent>();
     }
 
     public override void EnableInit()
@@ -145,12 +149,19 @@ public class Unit : InitSystem
         }
     }
 
+    public virtual void Move(Vector3 pos)
+    {
+        agent.SetDestination(pos);
+        OnMove.Invoke();
+    }
+
     public void Attack(Unit target, Transform tr = null)
     {
         if (!AttackOn) return;
         OnAttack.Invoke();
         nextAttackTime = Time.time + attackRate;
     }
+
 
     public virtual void Death()
     {
@@ -159,7 +170,7 @@ public class Unit : InitSystem
             if(unitType == UnitType.UNIT)
             {
                 GameManager.Instance.playerUnitDeathCount++;
-                if (this == GameManager.Instance.playerUnit) GameManager.Instance.State = GameState.ENDING; // 플레이어가 죽으면 엔딩
+                if (this == GameManager.Instance.playerUnit || this == GameManager.Instance.baseUnit) GameManager.Instance.State = GameState.ENDING; // 플레이어가 죽으면 엔딩
             }
             else if (unitType == UnitType.BUILDING) GameManager.Instance.playerBuildingDeathCount++;
         }

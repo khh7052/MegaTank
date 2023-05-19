@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 368736131617974715}
   - component: {fileID: 3652938385850361374}
   - component: {fileID: 1537186878945432276}
-  - component: {fileID: 3127701353815092583}
   - component: {fileID: 4314598516936695337}
   - component: {fileID: 8690914221778095864}
+  - component: {fileID: 6201866627797629067}
   m_Layer: 6
   m_Name: Wall_01_001
   m_TagString: Unit
@@ -86,22 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!208 &3127701353815092583
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1032963833712390913}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 4.762, y: 2.5080001, z: 0.45400003}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 2.2540002, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!114 &4314598516936695337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,12 +111,19 @@ MonoBehaviour:
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
+  OnMove:
+    m_PersistentCalls:
+      m_Calls: []
   OnAttack:
     m_PersistentCalls:
       m_Calls: []
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
+  makeCondition:
+    type: 0
+    count: 1
+    needUnit: {fileID: 0}
   team: 0
   unitName: "\uBCBD"
   unitDescription: "\uCF58\uD06C\uB9AC\uD2B8\uB85C \uB9CC\uB4E0 \uBCBD.\n\uC2DC\uAC04\uB04C\uAE30\uB85C\uB294
@@ -168,3 +159,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 9.524, y: 5.0160003, z: 0.908}
   m_Center: {x: 0, y: 2.254, z: 0}
+--- !u!208 &6201866627797629067
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1032963833712390913}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 4.762, y: 2.5080001, z: 0.45400003}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 2.2540002, z: 0}
+  m_TimeToStationary: 0.5

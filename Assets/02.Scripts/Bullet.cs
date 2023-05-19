@@ -17,9 +17,8 @@ public class Bullet : InitSystem
 
     private void OnCollisionEnter(Collision collision)
     {
-        Unit unit = collision.collider.GetComponent<Unit>();
+        Unit unit = collision.collider.GetComponentInParent<Unit>();
         if(unit != null) unit.TakeDamage(damage, owner);
-
         CreateImpact(collision.contacts[0].point, Quaternion.LookRotation(collision.contacts[0].normal));
         gameObject.SetActive(false);
     }
