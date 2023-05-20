@@ -13,6 +13,7 @@ public class InputMove : MonoBehaviour
     private float originalDistance;
     private float originalHeight;
 
+    public float limitRange = 200;
     void Awake()
     {
         originalPos = transform.position;
@@ -24,7 +25,7 @@ public class InputMove : MonoBehaviour
         GameManager.Instance.OnOpening.AddListener(Init);
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (GameManager.Instance.State != GameState.REST && GameManager.Instance.State != GameState.SETTING) return;
 
@@ -56,6 +57,12 @@ public class InputMove : MonoBehaviour
         Vector3 dir = new Vector3(h, 0, v).normalized;
 
         transform.Translate(moveSpeed * Time.deltaTime * dir);
+
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x, -limitRange, limitRange);
+        pos.z = Mathf.Clamp(pos.z, -limitRange, limitRange);
+
+        transform.position = pos;
     }
 
     void Zoom()

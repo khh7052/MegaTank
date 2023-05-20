@@ -6,9 +6,9 @@ using UnityEngine.SceneManagement;
 public class LobbyManager : Singleton<LobbyManager>
 {
 
-    public void OnLoadScene(string sceneName)
+    public void OnLoadScene()
     {
-        SceneManager.LoadScene(sceneName);
+        SceneManager.LoadScene(1);
     }
 
     public void OnExitBtn()

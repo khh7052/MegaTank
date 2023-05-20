@@ -23,6 +23,7 @@ public class UIManager : Singleton<UIManager>
     [Header("Battle")]
     // StartBattle
     public GameObject startBattleUI;
+    public Image aimImage;
     public TMP_Text enemyCountText;
 
     // EndBattle
@@ -41,7 +42,9 @@ public class UIManager : Singleton<UIManager>
     public TMP_Text bottomExplainText;
     public TMP_Text TopExplainText;
     public TMP_Text leftExplainText;
+    public TMP_Text centerExplainText;
     public TMP_Text currentMoneyText_Rest;
+
     [Header("Infomation")]
     // inofmation
     public GameObject infomationUI;
@@ -59,9 +62,6 @@ public class UIManager : Singleton<UIManager>
     [Multiline] public string infomationExplain;
     [Multiline] public string placementExplain;
     [Multiline] public string removeExplain;
-
-    public GameObject endingUI;
-    public TMP_Text endingText;
 
     private void Awake()
     {
@@ -133,11 +133,6 @@ public class UIManager : Singleton<UIManager>
                 infomationUI.SetActive(false);
                 endBattleUI.SetActive(false);
                 restUI.SetActive(true);
-                break;
-            case GameState.ENDING:
-                RestUIUpdate();
-                startBattleUI.SetActive(false);
-                endingUI.SetActive(true);
                 break;
         }
     }
@@ -236,26 +231,53 @@ public class UIManager : Singleton<UIManager>
     public void OnBuildBtn()
     {
         leftExplainText.text = buildExplain;
+        TopExplainText.text = "건설";
     }
 
     public void OnInfomationBtn()
     {
         leftExplainText.text = infomationExplain;
+        TopExplainText.text = "정보";
     }
 
     public void OnPlacementBtn()
     {
         leftExplainText.text = placementExplain;
+        TopExplainText.text = "배치";
     }
 
     public void OnRemoveBtn()
     {
         leftExplainText.text = removeExplain;
+        TopExplainText.text = "제거";
     }
 
     public void OnRestEndBtn()
     {
-        GameManager.Instance.State = GameState.OPENING;
+        bool hasBaseUnit = GameManager.Instance.baseUnit != null;
+        if (hasBaseUnit) hasBaseUnit = GameManager.Instance.baseUnit.gameObject.activeInHierarchy;
+        bool hasPlayerUnit = GameManager.Instance.playerUnit != null;
+        if (hasPlayerUnit) hasPlayerUnit = GameManager.Instance.playerUnit.gameObject.activeInHierarchy;
+
+        if (hasBaseUnit && hasPlayerUnit)
+        {
+            GameManager.Instance.State = GameState.OPENING;
+        }
+        else
+        {
+            string s = "";
+            if (!hasBaseUnit) s = "기지를 건설해야합니다!\n";
+            if (!hasPlayerUnit) s += "플레이어 탱크를 배치해야합니다!";
+
+            CenterExplainTextFade(s);
+        }
+        
+    }
+
+    public void CenterExplainTextFade(string s)
+    {
+        centerExplainText.text = s;
+        UIFade.Instance.FadeUI(centerExplainText, 1, 0, 3f);
     }
 
 }

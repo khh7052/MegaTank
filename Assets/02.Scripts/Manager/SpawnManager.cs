@@ -63,6 +63,10 @@ public class SpawnManager : Singleton<SpawnManager>
 
         spawnPoint.x = Mathf.Cos(angle) * rand;
         spawnPoint.z = Mathf.Sin(angle) * rand;
-        spawnPoint.y = 1;
+        spawnPoint.y = 100;
+        if(Physics.Raycast(spawnPoint, Vector3.down, out RaycastHit hit, 1000f, GameManager.Instance.terrainLayerMask))
+        {
+            spawnPoint.y = hit.point.y;
+        }
     }
 }

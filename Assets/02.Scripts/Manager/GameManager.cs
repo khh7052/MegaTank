@@ -6,17 +6,19 @@ using UnityEngine.SceneManagement;
 
 public enum GameState
 {
-    LOBBY,
-    OPENING,
-    SETTING,
+    LOBBY, // 로비
+    OPENING, // 시작전
+    SETTING, // 맨 처음날 설정
     STARTBATTLE, // 전투 시작
     ENDBATTLE, // 전투 끝
     REST, // 정비
-    ENDING, // 엔딩
+    WIN, // 승리 엔딩
+    DEFEAT, // 패배 엔딩
 }
 
 public class GameManager : Singleton<GameManager>
 {
+    public GameState startState;
     public UnityEvent OnOpening;
     public UnityEvent OnStartBattle;
     public UnityEvent OnEndBattle;
@@ -27,6 +29,7 @@ public class GameManager : Singleton<GameManager>
     public Unit playerUnit; // 플레이어 유닛
     public Unit baseUnit; // 플레이어 기지
 
+    public Light sunLight;
 
     public int initSpawnMoney = 500; // 스폰 최초 돈
     public int currentSpawnMoney = 500;
@@ -101,11 +104,15 @@ public class GameManager : Singleton<GameManager>
                     break;
                 case GameState.SETTING:
                     Cursor.lockState = CursorLockMode.Confined;
+                    sunLight.intensity = 1.5f;
                     RenderSettings.skybox = morningSkybox;
                     RenderSettings.fog = (Random.value > 0.5f);
                     Setting();
                     break;
                 case GameState.STARTBATTLE:
+                    playerUnit.agent.enabled = true;
+                    sunLight.intensity = 1.5f;
+                    RenderSettings.skybox = morningSkybox;
                     Cursor.lockState = CursorLockMode.Locked;
                     StartBattle();
                     break;
@@ -114,22 +121,35 @@ public class GameManager : Singleton<GameManager>
                     EndBattle();
                     break;
                 case GameState.REST:
+                    sunLight.intensity = 0.4f;
+                    playerUnit.agent.enabled = false;
+                    playerUnit.gameObject.SetActive(false);
+                    playerUnit = null;
                     RenderSettings.skybox = nightSkybox;
                     RenderSettings.fog = false;
                     Cursor.lockState = CursorLockMode.Confined;
                     Rest();
                     break;
-                case GameState.ENDING:
+                case GameState.WIN:
                     Cursor.lockState = CursorLockMode.Confined;
-                    Ending();
+                    Win();
+                    break;
+                case GameState.DEFEAT:
+                    Cursor.lockState = CursorLockMode.Confined;
+                    Defeat();
                     break;
                 default:
                     break;
             }
 
             SoundManager.Instance.SoundUpdate();
-            FollowCam.Instance.CamTargetUpdate();
-            UIManager.Instance.UIUpdate();
+            
+            if(state != GameState.LOBBY && state != GameState.WIN && state != GameState.DEFEAT)
+            {
+                UIManager.Instance.UIUpdate();
+                FollowCam.Instance.CamTargetUpdate();
+            }
+
             OnStateChange.Invoke();
         }
     }
@@ -141,7 +161,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        State = GameState.OPENING;
+        State = startState;
     }
 
     void Init()
@@ -177,7 +197,7 @@ public class GameManager : Singleton<GameManager>
         }
         else if (Day == endingDay)
         {
-            State = GameState.ENDING;
+            State = GameState.WIN;
         }
         else
         {
@@ -211,16 +231,16 @@ public class GameManager : Singleton<GameManager>
         OnRest.Invoke();
     }
 
-    void Ending()
+    void Win()
     {
-        if(Day == endingDay)
-        {
-            SceneManager.LoadScene(2);
-        }
-        else
-        {
-            SceneManager.LoadScene(3);
-        }
+        if (SceneManager.GetActiveScene().buildIndex == 2) return; // 현재 씬하고 동일하면 중지
+        SceneManager.LoadScene(2);
+    }
+
+    void Defeat()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 3) return; // 현재 씬하고 동일하면 중지
+        SceneManager.LoadScene(3);
     }
     
 }

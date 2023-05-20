@@ -23,18 +23,42 @@ public class BuildingManager : Singleton<BuildingManager>
 
     public Material spawnMaterial;
     public Material removeMaterial;
-    private Material originalMaterial;
+    private Material[] originalMaterials;
     
     private Renderer[] selectUnitObjectRenderers;
     
     public Material UnitMaterial
     {
-        get { return Instantiate(selectUnitObjectRenderers[0].material); }
+        set
+        {
+            foreach (Renderer renderer in selectUnitObjectRenderers) renderer.material = value;
+        }
+    }
+
+    public Material[] UnitMaterials
+    {
+        get { 
+            Material[] result = new Material[originalMaterials.Length];
+
+            for(int i = 0; i < result.Length; i++)
+            {
+                result[i] = Instantiate(selectUnitObjectRenderers[i].material);
+            }
+
+            return result; 
+        }
         set {
+
+            for (int i = 0; i < selectUnitObjectRenderers.Length; i++)
+            {
+                selectUnitObjectRenderers[i].material = value[i];
+            }
+            /*
             foreach (Renderer renderer in selectUnitObjectRenderers)
             {
                 renderer.material = value;
             }
+            */
         }
     }
     
@@ -105,47 +129,66 @@ public class BuildingManager : Singleton<BuildingManager>
     {
         if (selectUnit)
         {
-            UnitMaterial = originalMaterial;
+            UnitMaterials = originalMaterials;
             selectUnitObject.SetActive(false);
             selectUnit = null;
             selectUnitObject = null;
         }
-        
     }
 
     void SelectUnitMaterialReset()
     {
         if (selectUnit)
         {
-            UnitMaterial = originalMaterial;
+            UnitMaterials = originalMaterials;
             selectUnit = null;
             selectUnitObject = null;
         }
     }
 
+    // true = 돈이 충분함
+    bool CheckSpawnMoney(Unit unit)
+    {
+        if (GameManager.Instance.CurrentMoney < unit.spawnMoney)
+        {
+            UIManager.Instance.CenterExplainTextFade("돈이 부족합니다!");
+            return false;
+        }
+        else return true;
+    }
+
+    void SelectUnitMaterialSave()
+    {
+        Renderer[] renderers = selectUnitObject.GetComponentsInChildren<Renderer>();
+        Material[] materials = new Material[renderers.Length];
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            materials[i] = renderers[i].material;
+        }
+
+        originalMaterials = materials;
+    }
+
+    // SPAWN
+    public void StartSpawn(Unit unit)
+    {
+        if (!CheckSpawnMoney(unit)) return;
+        if (!unit.makeCondition.ConditionCheck(unit)) return;
+
+        Init();
+        SpawnInit(unit);
+    }
 
     void SpawnInit(Unit unit)
     {
         selectUnitObject = PoolManager.Instance.Pop(unit.gameObject);
         selectUnitObjectRenderers = selectUnitObject.GetComponentsInChildren<Renderer>();
         selectUnit = unit;
-        originalMaterial = selectUnitObject.GetComponentsInChildren<Renderer>()[0].material;
+
+        SelectUnitMaterialSave();
         UnitMaterial = spawnMaterial;
         mouseType = MouseType.SPAWN;
-    }
-
-    // SPAWN
-    public void StartSpawn(Unit unit)
-    {
-        if (GameManager.Instance.CurrentMoney < unit.spawnMoney) return;
-        if (!unit.makeCondition.ConditionCheck(unit))
-        {
-            print("조건을 달성하지 못했습니다.");
-            return; // 조건 달성 안되면 금지
-        }
-
-        Init();
-        SpawnInit(unit);
     }
 
     void Spawn()
@@ -154,18 +197,14 @@ public class BuildingManager : Singleton<BuildingManager>
         if (GameManager.Instance.CurrentMoney < selectUnit.spawnMoney) return;
 
         GameManager.Instance.CurrentMoney -= selectUnit.spawnMoney;
-        UnitMaterial = originalMaterial;
-        SpawnInit(selectUnit);
-
+        UnitMaterials = originalMaterials;
+        
         audioSource.clip = spawnSound;
         audioSource.Play();
 
-        if (GameManager.Instance.CurrentMoney < selectUnit.spawnMoney) Init();
-        if (!selectUnit.makeCondition.ConditionCheck(selectUnit))
-        {
-            print("조건을 달성하지 못했습니다.");
-            Init();
-        }
+        // 돈 안부족하고, 생성 조건에 맞을 때 생성
+        if (selectUnit.makeCondition.ConditionCheck(selectUnit) && CheckSpawnMoney(selectUnit)) SpawnInit(selectUnit);
+        else SelectUnitMaterialReset();
     }
 
     
@@ -198,7 +237,7 @@ public class BuildingManager : Singleton<BuildingManager>
             
             selectUnitObject = unitHit.collider.gameObject;
             selectUnitObjectRenderers = selectUnitObject.GetComponentsInChildren<Renderer>();
-            originalMaterial = selectUnitObject.GetComponentsInChildren<Renderer>()[0].material;
+            SelectUnitMaterialSave();
             UnitMaterial = spawnMaterial;
         }
     }
@@ -230,7 +269,7 @@ public class BuildingManager : Singleton<BuildingManager>
 
             selectUnitObject = unitHit.collider.gameObject;
             selectUnitObjectRenderers = selectUnitObject.GetComponentsInChildren<Renderer>();
-            originalMaterial = selectUnitObject.GetComponentsInChildren<Renderer>()[0].material;
+            SelectUnitMaterialSave();
             UnitMaterial = removeMaterial;
         }
     }

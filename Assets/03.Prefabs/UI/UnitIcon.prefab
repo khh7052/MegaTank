@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1616759854516927965}
   - component: {fileID: 2428755551446998138}
   - component: {fileID: 4310832688490241231}
+  - component: {fileID: -8626613536919222901}
   m_Layer: 5
   m_Name: UnitIcon
   m_TagString: Untagged
@@ -100,8 +101,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 1}
+    m_PressedColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -146,5 +147,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5f6eccd083160440b2d5fece3ffed13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitImage: {fileID: 0}
   unit: {fileID: 2276165015185322625, guid: cb6731fe92632304fa826f86eb794f2a, type: 3}
+--- !u!114 &-8626613536919222901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8353765974434969816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c1e03853d024094fa2a713868f65536, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 3cfe8dc7835710749b767d48a30cc7d9, type: 3}

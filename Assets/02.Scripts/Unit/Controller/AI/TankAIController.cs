@@ -28,7 +28,11 @@ public class TankAIController : AIController
     void MoveVolumeUpdate()
     {
         float volume;
-        if (agent.isStopped) volume = 0;
+        if (agent.isStopped)
+        {
+            volume = 0;
+            print(gameObject.name);
+        }
         else volume = agent.velocity.magnitude / agent.speed;
         // print(agent.velocity.magnitude + " " + agent.speed);
         

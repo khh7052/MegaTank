@@ -38,13 +38,27 @@ public class Condition
                 return true;
             case ConditionType.LIMIT:
                 if (PoolManager.Instance.poolList.ContainsKey(myUnit.gameObject) == false) return true; // 만든적 없으면 true
-                return PoolManager.Instance.poolList[myUnit.gameObject].Count < count; // 만든 개수가 제한보다 적으면 true
+
+                int activeCount = 0;
+
+                foreach (GameObject item in PoolManager.Instance.poolList[myUnit.gameObject])
+                {
+                    if (item.activeInHierarchy) activeCount++;
+                }
+
+                if (activeCount < count) return true; // 만든 개수가 제한보다 적으면 true
+                else
+                {
+                    UIManager.Instance.CenterExplainTextFade("한계치까지 생성했습니다!");
+                    return false;
+                }
             case ConditionType.NEED:
                 foreach (GameObject g in PoolManager.Instance.poolList[needUnit.gameObject])
                 {
                     if (g.activeInHierarchy) return true; // 현재 필요한 유닛이 존재하면 true
                 }
 
+                UIManager.Instance.CenterExplainTextFade($"{needUnit.name}이(가) 필요합니다!");
                 return false;
         }
 
@@ -55,7 +69,7 @@ public class Condition
 [RequireComponent(typeof(NavMeshAgent))]
 public class Unit : InitSystem
 {
-    protected NavMeshAgent agent;
+    public NavMeshAgent agent;
     public UnitType unitType;
     public UnityEvent OnDeath = new();
     public UnityEvent OnMove = new();
@@ -71,13 +85,14 @@ public class Unit : InitSystem
     public int spawnMoney = 100; // 생성 비용
     public int deathMoney = 50; // 사망 시 흭득하는 돈
 
-    [HideInInspector] public AIController aiController;
+    public AIController aiController;
     protected Rigidbody rb;
 
     [Header("HP")]
     public int maxHP = 100;
     public int currentHP = 100;
     public int armor = 0;
+    public bool initHP = true;
 
     [Header("Move")]
     public float moveSpeed = 10f; // 이동속도
@@ -130,7 +145,7 @@ public class Unit : InitSystem
 
     public override void EnableInit()
     {
-        currentHP = maxHP;
+        if(initHP) currentHP = maxHP;
 
         base.EnableInit();
     }
@@ -170,7 +185,7 @@ public class Unit : InitSystem
             if(unitType == UnitType.UNIT)
             {
                 GameManager.Instance.playerUnitDeathCount++;
-                if (this == GameManager.Instance.playerUnit || this == GameManager.Instance.baseUnit) GameManager.Instance.State = GameState.ENDING; // 플레이어가 죽으면 엔딩
+                if (this == GameManager.Instance.playerUnit || this == GameManager.Instance.baseUnit) GameManager.Instance.State = GameState.DEFEAT; // 플레이어나 기지가 파괴되면 패배
             }
             else if (unitType == UnitType.BUILDING) GameManager.Instance.playerBuildingDeathCount++;
         }

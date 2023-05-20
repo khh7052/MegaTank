@@ -22,9 +22,8 @@ public class TankController : Controller
     private float wheel;
 
 
-    public Image aimImage;
+    private Image aimImage;
     private RectTransform aimRectTransform;
-    public Image aimBackImage;
     private Vector3 zoomInAimScale = new(0.5f, 0.5f, 0.5f);
     private Vector3 zoomOutAimScale = new(1f, 1f, 1f);
     public float zoomSpeed = 0.2f;
@@ -54,13 +53,15 @@ public class TankController : Controller
     {
         if (GameManager.Instance.State != GameState.STARTBATTLE) return;
         AimUpdate();
-        AimImageUpdate();
+        // AimImageUpdate();
     }
 
     public override void AwakeInit()
     {
+        aimImage = UIManager.Instance.aimImage;
         aimRectTransform = aimImage.rectTransform;
         GameManager.Instance.OnStateChange.AddListener(() => VolumeReset());
+        myTank.OnAttack.AddListener(AimImageUpdate);
         base.AwakeInit();
     }
 
@@ -73,7 +74,8 @@ public class TankController : Controller
 
     void AimImageUpdate()
     {
-        aimBackImage.fillAmount = myTank.FireTime;
+        UIFade.Instance.FadeUI(aimImage, 0, 1, myTank.attackRate);
+        // aimBackImage.fillAmount = myTank.FireTime;
     }
 
     void FireInput()

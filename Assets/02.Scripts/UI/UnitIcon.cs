@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class UnitIcon : MonoBehaviour
 {
-    public Texture unitImage;
     public Unit unit;
 
     public void PassInfomation()
