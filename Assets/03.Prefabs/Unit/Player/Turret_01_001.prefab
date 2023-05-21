@@ -241,7 +241,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   agent: {fileID: 0}
-  unitType: 1
+  unitType: 0
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -275,7 +275,7 @@ MonoBehaviour:
   unitDescription: "\uC790\uB3D9\uC73C\uB85C \uC0C1\uB300\uBC29\uC744 \uACF5\uACA9\uD558\uB294
     \uD130\uB81B.\n\uC544\uAD70\uC758 \uACF5\uACA9\uB3C4 \uB370\uBBF8\uC9C0\uAC00
     \uB4E4\uC5B4\uAC00\uB2C8 \uC8FC\uC758\uD560 \uAC83"
-  spawnMoney: 400
+  spawnMoney: 300
   deathMoney: 50
   aiController: {fileID: 0}
   maxHP: 50

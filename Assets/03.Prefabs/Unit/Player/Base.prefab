@@ -172,7 +172,7 @@ MonoBehaviour:
   aiController: {fileID: 0}
   maxHP: 1000
   currentHP: 1000
-  armor: 1
+  armor: 2
   initHP: 1
   moveSpeed: 0
   rotateSpeed: 0

@@ -4510,7 +4510,7 @@ MonoBehaviour:
   currentSpawnMoney: 300
   initMoney: 1000
   saveMoney: 0
-  plusSpawnMoney: 0.5
+  plusSpawnMoney: 0.4
   morningSkybox: {fileID: 2100000, guid: f14e791cab3ea0c4397ab4827d05bebc, type: 2}
   nightSkybox: {fileID: 2100000, guid: aa78c8d403a8547fe86d1f74239e6b03, type: 2}
   playerUnitDeathCount: 0
@@ -14122,7 +14122,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4657912423501411627, guid: 25b5b897b709fda44b9929eab6361ccd, type: 3}
       propertyPath: initPrice
-      value: 200
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 4657912423501411627, guid: 25b5b897b709fda44b9929eab6361ccd, type: 3}
+      propertyPath: plusPrice
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4657912423501411628, guid: 25b5b897b709fda44b9929eab6361ccd, type: 3}
       propertyPath: m_Pivot.x

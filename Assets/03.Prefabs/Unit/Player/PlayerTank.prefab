@@ -829,9 +829,9 @@ MonoBehaviour:
   spawnMoney: 0
   deathMoney: 0
   aiController: {fileID: 0}
-  maxHP: 100
-  currentHP: 100
-  armor: 0
+  maxHP: 200
+  currentHP: 200
+  armor: 1
   initHP: 0
   moveSpeed: 20
   rotateSpeed: 60

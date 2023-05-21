@@ -202,12 +202,12 @@ MonoBehaviour:
   unitDescription: "\uC544\uAD70 \uD0F1\uD06C \uC0DD\uC0B0\uC744 \uC704\uD55C \uACF5\uC7A5.\n\uAC74\uC124
     \uC2DC \uC544\uAD70 \uD0F1\uD06C \uC720\uB2DB\uC744 \uAC1C\uBC1C\uD560 \uC218
     \uC788\uB2E4."
-  spawnMoney: 1000
+  spawnMoney: 800
   deathMoney: 0
   aiController: {fileID: 0}
-  maxHP: 500
-  currentHP: 500
-  armor: 0
+  maxHP: 600
+  currentHP: 600
+  armor: 1
   initHP: 1
   moveSpeed: 0
   rotateSpeed: 0

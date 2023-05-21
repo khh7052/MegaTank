@@ -71,7 +71,7 @@ public class UIManager : Singleton<UIManager>
 
     private void Update()
     {
-        if (GameManager.Instance.State != GameState.STARTBATTLE) return;
+        if (GameManager.Instance.State != GameState.STARTBATTLE && GameManager.Instance.State != GameState.REST && GameManager.Instance.State != GameState.SETTING) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -256,6 +256,8 @@ public class UIManager : Singleton<UIManager>
 
     public void OnRestEndBtn()
     {
+        BuildingManager.Instance.Init();
+
         bool hasBaseUnit = GameManager.Instance.baseUnit != null;
         if (hasBaseUnit) hasBaseUnit = GameManager.Instance.baseUnit.gameObject.activeInHierarchy;
         bool hasPlayerUnit = GameManager.Instance.playerUnit != null;

@@ -374,7 +374,7 @@ MonoBehaviour:
   moveSpeed: 15
   rotateSpeed: 50
   attackDamage: 5
-  attackRate: 2
+  attackRate: 3
   lookDistance: 50
   attackDistance: 45
   retreatDistance: 10

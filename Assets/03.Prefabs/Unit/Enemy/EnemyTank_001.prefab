@@ -418,7 +418,7 @@ MonoBehaviour:
   initHP: 1
   moveSpeed: 10
   rotateSpeed: 50
-  attackDamage: 15
+  attackDamage: 14
   attackRate: 6
   lookDistance: 80
   attackDistance: 75

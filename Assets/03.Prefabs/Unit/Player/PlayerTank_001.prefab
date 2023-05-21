@@ -587,11 +587,11 @@ MonoBehaviour:
   team: 0
   unitName: "\uD0F1\uD06C"
   unitDescription: "\uAD1C\uCC2E\uC740 \uC131\uB2A5\uC744 \uAC00\uC9C4 \uD0F1\uD06C\uB2E4."
-  spawnMoney: 800
+  spawnMoney: 600
   deathMoney: 50
   aiController: {fileID: 0}
-  maxHP: 100
-  currentHP: 100
+  maxHP: 80
+  currentHP: 80
   armor: 2
   initHP: 1
   moveSpeed: 20

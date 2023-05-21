@@ -119,7 +119,7 @@ public class BuildingManager : Singleton<BuildingManager>
         Physics.Raycast(ray, out terrainHit, Mathf.Infinity, GameManager.Instance.terrainLayerMask);
     }
 
-    void Init()
+    public void Init()
     {
         if (mouseType == MouseType.SPAWN) SelectUnitReset();
         if (mouseType == MouseType.REMOVE) SelectUnitMaterialReset();

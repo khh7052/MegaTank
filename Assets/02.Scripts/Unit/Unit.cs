@@ -117,7 +117,7 @@ public class Unit : InitSystem
 
     public float MoveSpeed
     {
-        get { return agent.speed; }
+        get { return moveSpeed; }
         set
         {
             moveSpeed = value;
@@ -126,7 +126,7 @@ public class Unit : InitSystem
     }
     public float RotateSpeed
     {
-        get { return agent.angularSpeed; }
+        get { return rotateSpeed; }
         set
         {
             rotateSpeed = value;
@@ -184,7 +184,7 @@ public class Unit : InitSystem
         aiController = GetComponent<AIController>();
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
-        agent.enabled = false;
+        if(agent) agent.enabled = false;
     }
 
     public override void AwakeInit()
@@ -241,11 +241,9 @@ public class Unit : InitSystem
     {
         if(team == Team.PLAYER)
         {
-            if(unitType == UnitType.UNIT)
-            {
-                GameManager.Instance.playerUnitDeathCount++;
-                if (this == GameManager.Instance.playerUnit || this == GameManager.Instance.baseUnit) GameManager.Instance.State = GameState.DEFEAT; // 플레이어나 기지가 파괴되면 패배
-            }
+            if (this == GameManager.Instance.playerUnit || this == GameManager.Instance.baseUnit) GameManager.Instance.State = GameState.DEFEAT; // 플레이어나 기지가 파괴되면 패배
+            
+            if (unitType == UnitType.UNIT) GameManager.Instance.playerUnitDeathCount++;
             else if (unitType == UnitType.BUILDING) GameManager.Instance.playerBuildingDeathCount++;
         }
         if (team == Team.ENEMY)
