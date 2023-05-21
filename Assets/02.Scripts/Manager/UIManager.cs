@@ -227,6 +227,8 @@ public class UIManager : Singleton<UIManager>
         unitDescriptionText.text = unit.unitDescription;
 
         leftExplainText.text = buildExplain;
+
+        EnforceButton.SelectUnit = unit;
     }
     public void OnBuildBtn()
     {

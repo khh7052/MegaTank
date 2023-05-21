@@ -10,7 +10,9 @@ public class UnitIcon : MonoBehaviour
 
     public void PassInfomation()
     {
-        UIManager.Instance.InfomationUIUpdate(unit);
         BuildingManager.Instance.StartSpawn(unit);
+        if (BuildingManager.Instance.selectUnitObject == null) return;
+        Unit selectUnit = BuildingManager.Instance.selectUnitObject.GetComponent<Unit>();
+        if(selectUnit != null) UIManager.Instance.InfomationUIUpdate(selectUnit);
     }
 }

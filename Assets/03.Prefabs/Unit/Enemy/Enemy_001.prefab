@@ -195,7 +195,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2.5
-  m_BaseOffset: 0.5
+  m_BaseOffset: -0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!82 &4253346056397695684
@@ -331,6 +331,7 @@ MonoBehaviour:
   OnDisableInit:
     m_PersistentCalls:
       m_Calls: []
+  agent: {fileID: 0}
   unitType: 0
   OnDeath:
     m_PersistentCalls:
@@ -369,8 +370,9 @@ MonoBehaviour:
   maxHP: 20
   currentHP: 20
   armor: 0
+  initHP: 1
   moveSpeed: 15
-  rotateSpeed: 30
+  rotateSpeed: 50
   attackDamage: 5
   attackRate: 2
   lookDistance: 50
@@ -382,7 +384,7 @@ MonoBehaviour:
   moveSound: {fileID: 8300000, guid: 00158da2c52737e41b5b3f66e3a549b2, type: 3}
   attackSound: {fileID: 8300000, guid: 7d00ff2a51ca82f43b5738b1c3522f8f, type: 3}
   bullet: {fileID: 3064432462362056972, guid: 9c2a664319c8c9143aae4a9840c46a68, type: 3}
-  bulletPower: 50
+  bulletPower: 40
   muzzle: {fileID: 3033170912916529932, guid: f7a84335dca996b4f88dbb659440db3d, type: 3}
   spPoint: {fileID: 4940139858198649445}
   turretRotSpeed: 20

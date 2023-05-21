@@ -143,7 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioMixer: {fileID: 24100000, guid: 1c9443d9554dfa6439c96d91d663a6ea, type: 2}
   lobbyBGM: {fileID: 8300000, guid: e6b468d8ce549d54d87a88cf364f4421, type: 3}
-  openingBGM: {fileID: 0}
+  openingBGM: {fileID: 8300000, guid: 39aa2cff31e9949468fe5db418e4572a, type: 3}
   startBattleBGM: {fileID: 8300000, guid: 22a9f02aa263ce742965874b3112a16c, type: 3}
   endBattleSFX: {fileID: 8300000, guid: 463de6d8755dd014b84bc0146b2fd31b, type: 3}
   restBGM: {fileID: 8300000, guid: a019b5728841fca4e9ad6b32371f32b8, type: 3}

@@ -110,7 +110,7 @@ public class GameManager : Singleton<GameManager>
                     Setting();
                     break;
                 case GameState.STARTBATTLE:
-                    playerUnit.agent.enabled = true;
+                    // playerUnit.agent.enabled = true;
                     sunLight.intensity = 1.5f;
                     RenderSettings.skybox = morningSkybox;
                     Cursor.lockState = CursorLockMode.Locked;
@@ -121,8 +121,8 @@ public class GameManager : Singleton<GameManager>
                     EndBattle();
                     break;
                 case GameState.REST:
-                    sunLight.intensity = 0.4f;
-                    playerUnit.agent.enabled = false;
+                    sunLight.intensity = 0.2f;
+                    // playerUnit.agent.enabled = false;
                     playerUnit.gameObject.SetActive(false);
                     playerUnit = null;
                     RenderSettings.skybox = nightSkybox;

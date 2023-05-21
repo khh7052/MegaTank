@@ -120,7 +120,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 49.845287
-  m_BaseOffset: 24.922644
+  m_BaseOffset: -0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &8180145487018689025
@@ -144,6 +144,7 @@ MonoBehaviour:
   OnDisableInit:
     m_PersistentCalls:
       m_Calls: []
+  agent: {fileID: 0}
   unitType: 1
   OnDeath:
     m_PersistentCalls:
@@ -171,7 +172,8 @@ MonoBehaviour:
   aiController: {fileID: 0}
   maxHP: 1000
   currentHP: 1000
-  armor: 2
+  armor: 1
+  initHP: 1
   moveSpeed: 0
   rotateSpeed: 0
   attackDamage: 0

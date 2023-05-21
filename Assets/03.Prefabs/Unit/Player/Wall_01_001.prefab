@@ -107,6 +107,7 @@ MonoBehaviour:
   OnDisableInit:
     m_PersistentCalls:
       m_Calls: []
+  agent: {fileID: 0}
   unitType: 1
   OnDeath:
     m_PersistentCalls:
@@ -126,22 +127,23 @@ MonoBehaviour:
     needUnit: {fileID: 0}
   team: 0
   unitName: "\uBCBD"
-  unitDescription: "\uCF58\uD06C\uB9AC\uD2B8\uB85C \uB9CC\uB4E0 \uBCBD.\n\uC2DC\uAC04\uB04C\uAE30\uB85C\uB294
+  unitDescription: "\uAE09\uD558\uAC8C \uB9CC\uB4E0 \uBCBD.\n\uC2DC\uAC04\uB04C\uAE30\uB85C\uB294
     \uC801\uB2F9\uD558\uB2E4."
-  spawnMoney: 100
+  spawnMoney: 200
   deathMoney: 50
   aiController: {fileID: 0}
   maxHP: 100
-  currentHP: 100
+  currentHP: 200
   armor: 0
-  moveSpeed: 10
-  rotateSpeed: 10
-  attackDamage: 10
-  attackRate: 1
-  lookDistance: 100
-  attackDistance: 50
-  retreatDistance: 10
-  chaseTime: 5
+  initHP: 1
+  moveSpeed: 0
+  rotateSpeed: 0
+  attackDamage: 0
+  attackRate: 0
+  lookDistance: 0
+  attackDistance: 0
+  retreatDistance: 0
+  chaseTime: 0
   destroyImpact: {fileID: 0}
   audioSoruce: {fileID: 0}
   moveSound: {fileID: 0}

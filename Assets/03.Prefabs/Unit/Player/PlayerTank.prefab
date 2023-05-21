@@ -845,8 +845,8 @@ MonoBehaviour:
   audioSoruce: {fileID: 6618613394811460968}
   moveSound: {fileID: 8300000, guid: 00158da2c52737e41b5b3f66e3a549b2, type: 3}
   attackSound: {fileID: 8300000, guid: 7d00ff2a51ca82f43b5738b1c3522f8f, type: 3}
-  bullet: {fileID: 2544115765477511180, guid: 93bc00a8c178a0c4a91628b408bbe1e8, type: 3}
-  bulletPower: 500
+  bullet: {fileID: 9123807808606438095, guid: 191eec096a12ec040b49224fcbbf994b, type: 3}
+  bulletPower: 250
   muzzle: {fileID: 3269708740057353192, guid: be9ca1dcee87be142b80270e2d026edc, type: 3}
   spPoint: {fileID: 6618613394811460971}
   turretRotSpeed: 50

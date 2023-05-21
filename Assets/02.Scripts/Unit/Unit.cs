@@ -53,12 +53,17 @@ public class Condition
                     return false;
                 }
             case ConditionType.NEED:
+                if (!PoolManager.Instance.poolList.ContainsKey(needUnit.gameObject))
+                {
+                    UIManager.Instance.CenterExplainTextFade($"{needUnit.unitName}이(가) 필요합니다!");
+                    return false; // 존재하지 않으면 false
+                }
                 foreach (GameObject g in PoolManager.Instance.poolList[needUnit.gameObject])
                 {
                     if (g.activeInHierarchy) return true; // 현재 필요한 유닛이 존재하면 true
                 }
 
-                UIManager.Instance.CenterExplainTextFade($"{needUnit.name}이(가) 필요합니다!");
+                UIManager.Instance.CenterExplainTextFade($"{needUnit.unitName}이(가) 필요합니다!");
                 return false;
         }
 
@@ -78,6 +83,8 @@ public class Unit : InitSystem
     public Condition makeCondition;
     public Team team;
 
+    public EnforceData enforceData;
+
     public string unitName = "";
     [Multiline]
     public string unitDescription = "";
@@ -91,12 +98,42 @@ public class Unit : InitSystem
     [Header("HP")]
     public int maxHP = 100;
     public int currentHP = 100;
+
+    public int CurrentHP
+    {
+        get { return currentHP; }
+        set
+        {
+            currentHP = Mathf.Min(value, maxHP);
+        }
+    }
+
     public int armor = 0;
     public bool initHP = true;
 
     [Header("Move")]
     public float moveSpeed = 10f; // 이동속도
     public float rotateSpeed = 10f; // 회전속도
+
+    public float MoveSpeed
+    {
+        get { return agent.speed; }
+        set
+        {
+            moveSpeed = value;
+            agent.speed = value;
+        }
+    }
+    public float RotateSpeed
+    {
+        get { return agent.angularSpeed; }
+        set
+        {
+            rotateSpeed = value;
+            agent.angularSpeed = value;
+        }
+    }
+
 
     [Header("Attack")]
     public int attackDamage = 10;
@@ -125,6 +162,12 @@ public class Unit : InitSystem
         get { return nextAttackTime - Time.time; }
     }
 
+    public float AttackRate
+    {
+        get { return attackRate; }
+        set { attackRate = Mathf.Max(value, 0.1f); }
+    }
+
     public bool AttackOn
     {
         get { return nextAttackTime < Time.time; }
@@ -141,12 +184,28 @@ public class Unit : InitSystem
         aiController = GetComponent<AIController>();
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
+        agent.enabled = false;
+    }
+
+    public override void AwakeInit()
+    {
+        base.AwakeInit();
+        enforceData = new();
+        GameManager.Instance.OnStartBattle.AddListener(AgentUpdate);
+        GameManager.Instance.OnRest.AddListener(AgentUpdate);
+    }
+
+    void AgentUpdate()
+    {
+        if (unitType == UnitType.BUILDING) return;
+
+        if (GameManager.Instance.State == GameState.STARTBATTLE) agent.enabled = true;
+        else if (GameManager.Instance.State == GameState.REST) agent.enabled = false;
     }
 
     public override void EnableInit()
     {
         if(initHP) currentHP = maxHP;
-
         base.EnableInit();
     }
 

@@ -17,8 +17,8 @@ public enum MouseType
 
 public class BuildingManager : Singleton<BuildingManager>
 {
-    private Unit selectUnit;
-    private GameObject selectUnitObject;
+    public Unit selectUnit;
+    public GameObject selectUnitObject;
     public float rotateSpeed = 5f;
 
     public Material spawnMaterial;
@@ -70,6 +70,7 @@ public class BuildingManager : Singleton<BuildingManager>
     public AudioSource audioSource;
     public AudioClip spawnSound;
     public AudioClip removeSound;
+    public AudioClip selectSound;
 
     private void Awake()
     {
@@ -151,7 +152,7 @@ public class BuildingManager : Singleton<BuildingManager>
     {
         if (GameManager.Instance.CurrentMoney < unit.spawnMoney)
         {
-            UIManager.Instance.CenterExplainTextFade("돈이 부족합니다!");
+            UIManager.Instance.CenterExplainTextFade($"돈이 {unit.spawnMoney - GameManager.Instance.CurrentMoney}만큼 부족합니다!");
             return false;
         }
         else return true;
@@ -234,7 +235,7 @@ public class BuildingManager : Singleton<BuildingManager>
         {
             selectUnit = unitHit.collider.GetComponent<Unit>();
             if (selectUnit == null) return;
-            
+
             selectUnitObject = unitHit.collider.gameObject;
             selectUnitObjectRenderers = selectUnitObject.GetComponentsInChildren<Renderer>();
             SelectUnitMaterialSave();
@@ -245,6 +246,7 @@ public class BuildingManager : Singleton<BuildingManager>
     void OpenUnitInfomation()
     {
         if (selectUnit == null) return;
+        SoundManager.Instance.PlaySFX(selectSound);
         UIManager.Instance.InfomationUIUpdate(selectUnit);
     }
 

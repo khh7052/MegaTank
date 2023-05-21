@@ -5,10 +5,22 @@ using UnityEngine;
 public class Bullet : InitSystem
 {
     public Unit owner;
-    public Rigidbody rb;
     public GameObject impact;
     public float power = 600;
     public int damage = 10;
+    private TrailRenderer trailRenderer;
+
+    public override void ComponentInit()
+    {
+        trailRenderer = GetComponent<TrailRenderer>();
+        base.ComponentInit();
+    }
+
+    public override void DisableInit()
+    {
+        base.DisableInit();
+        if (trailRenderer) trailRenderer.Clear();
+    }
 
     private void CreateImpact(Vector3 pos, Quaternion rot)
     {

@@ -218,6 +218,7 @@ public class AIController : Controller
         while (true)
         {
             while (GameManager.Instance.State != GameState.STARTBATTLE) yield return wait;
+            while (agent.enabled == false) yield return wait;
             AgentPosRepair();
             TargetUpdate();
 
